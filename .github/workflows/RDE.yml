@@ -12,7 +12,9 @@ jobs:
 
     - name: Download PageKite
       run: |
-        Invoke-WebRequest -Uri https://pagekite.py/2.0.1/pagekite.py -OutFile pagekite.py
+        Invoke-WebRequest -Uri https://pagekite.net/pk/pagekite.py -OutFile pagekite.py
+        Invoke-WebRequest -Uri https://pagekite.net/pk/pagekite.py.sig -OutFile pagekite.py.sig
+        # Optionally, here you can add code to verify the signature if needed.
 
     - name: Enable RDP Access
       run: |
@@ -23,4 +25,3 @@ jobs:
     - name: Start PageKite Tunnel
       run: |
         python pagekite.py 3389 rdp.freerdp.pagekite.me ${{ secrets.PAGEKITE_SECRET }}
-

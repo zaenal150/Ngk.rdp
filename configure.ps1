@@ -3,8 +3,14 @@
 # This script is executed when GitHub actions is initialized.
 Write-Output "[INFO] Script started!"
 
-# Download PageKite
-Invoke-WebRequest -Uri https://pagekite.net/pk/pagekite.py -OutFile pagekite.py
+# Download PageKite if not installed
+Write-Output "[INFO] Checking for PageKite installation..."
+try {
+    python -m pagekite --version
+} catch {
+    Write-Output "[INFO] PageKite not found. Installing..."
+    python -m pip install pagekite
+}
 
 # Enabling RDP Access
 Write-Output "[INFO] Enabling RDP access..."
@@ -20,7 +26,6 @@ Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText
 
 # Start PageKite tunnel
 Write-Output "[INFO] Starting PageKite tunnel..."
-python pagekite.py 3389 rdp.freerdp.pagekite.me $env:PAGEKITE_SECRET
+python -m pagekite 3389 rdp.freerdp.pagekite.me $env:PAGEKITE_SECRET
 
-# Note: Replace 'rdp.freerdp.pagekite.me' with your actual registered subdomain.
 Write-Output "[INFO] RDP tunnel is now active. You can connect using the provided PageKite URL."

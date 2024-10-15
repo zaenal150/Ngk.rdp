@@ -3,21 +3,24 @@
 # This script is executed when GitHub actions is initialized.
 Write-Output "[INFO] Script started!"
 
-# First we download ngrok
-Invoke-WebRequest -Uri https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
-
-# Then we unzip it
-Expand-Archive -LiteralPath '.\ngrok.zip'
-
-# Set-up and save ngrok authtoken
-./ngrok/ngrok.exe authtoken $env:NGROK_AUTH_TOKEN
+# Download PageKite
+Invoke-WebRequest -Uri https://pagekite.net/pk/pagekite.py -OutFile pagekite.py
 
 # Enabling RDP Access
-Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
+Write-Output "[INFO] Enabling RDP access..."
+Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
 
-# Authorize RDP Service from firewall so we don't get a weird state
+# Authorize RDP Service from firewall
+Write-Output "[INFO] Enabling firewall rules for RDP..."
 Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
 
-# Change password to the one we set-up as RDP_PASSWORD on our repo settings.
+# Change password to the one set in RDP_PASSWORD on repo settings
+Write-Output "[INFO] Changing RDP password..."
 Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "$env:RDP_PASSWORD" -Force)
-Exit
+
+# Start PageKite tunnel
+Write-Output "[INFO] Starting PageKite tunnel..."
+python pagekite.py 3389 rdp.freerdp.pagekite.me $env:PAGEKITE_SECRET
+
+# Note: Replace 'rdp.freerdp.pagekite.me' with your actual registered subdomain.
+Write-Output "[INFO] RDP tunnel is now active. You can connect using the provided PageKite URL."

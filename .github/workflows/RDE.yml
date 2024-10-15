@@ -1,26 +1,26 @@
-name: Cl
+name: RDP via PageKite
 
 on: [push, workflow_dispatch]
 
 jobs:
   build:
-
     runs-on: windows-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-      
-    - name: Install PageKite
-      run: python -m pip install pagekite
-      
+
+    - name: Download PageKite
+      run: |
+        Invoke-WebRequest -Uri https://pagekite.py/2.0.1/pagekite.py -OutFile pagekite.py
+
     - name: Enable RDP Access
       run: |
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
         Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
         Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "$env:RDP_PASSWORD" -Force)
-      
+
     - name: Start PageKite Tunnel
       run: |
-        python -m pagekite 3389 rdp.freerdp.pagekite.me ${{ secrets.PAGEKITE_SECRET }}
+        python pagekite.py 3389 rdp.freerdp.pagekite.me ${{ secrets.PAGEKITE_SECRET }}
 

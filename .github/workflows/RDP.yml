@@ -10,16 +10,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Download PageKite
-      run: |
-        Invoke-WebRequest -Uri https://pagekite.net/pk/pagekite.py -OutFile pagekite.py
-
     - name: Enable RDP Access
       run: |
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
         Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
         if ($env:RDP_PASSWORD) {
-          Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "$env:RDP_PASSWORD" -Force)
+          Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "${{ secrets.RDP_PASSWORD }}" -Force)
         } else {
           Write-Error "RDP_PASSWORD is not set. Please set the RDP_PASSWORD secret in the repository settings."
           exit 1

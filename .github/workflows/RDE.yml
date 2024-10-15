@@ -14,13 +14,17 @@ jobs:
       run: |
         Invoke-WebRequest -Uri https://pagekite.net/pk/pagekite.py -OutFile pagekite.py
         Invoke-WebRequest -Uri https://pagekite.net/pk/pagekite.py.sig -OutFile pagekite.py.sig
-        # Optionally, here you can add code to verify the signature if needed.
 
     - name: Enable RDP Access
       run: |
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
         Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
-        Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "$env:RDP_PASSWORD" -Force)
+        if ($env:RDP_PASSWORD) {
+          Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "$env:RDP_PASSWORD" -Force)
+        } else {
+          Write-Error "RDP_PASSWORD is not set. Please set the RDP_PASSWORD secret in the repository settings."
+          exit 1
+        }
 
     - name: Start PageKite Tunnel
       run: |

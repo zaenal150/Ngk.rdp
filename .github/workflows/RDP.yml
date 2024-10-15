@@ -13,7 +13,6 @@ jobs:
     - name: Download PageKite
       run: |
         Invoke-WebRequest -Uri https://pagekite.net/pk/pagekite.py -OutFile pagekite.py
-        Invoke-WebRequest -Uri https://pagekite.net/pk/pagekite.py.sig -OutFile pagekite.py.sig
 
     - name: Enable RDP Access
       run: |

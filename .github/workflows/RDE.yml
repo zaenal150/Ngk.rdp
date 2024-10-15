@@ -19,9 +19,9 @@ jobs:
     - name: Install PageKite Dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install pagekite
+        # PageKite tidak tersedia sebagai paket pip, jadi langkah ini dihapus
 
-    - name: Setup PageKite
+    - name: Setup PageKite Tunnel
       run: python pagekite.py 3389 rdp.freerdp.pagekite.me $Env:PAGEKITE_SECRET
       env:
         PAGEKITE_SECRET: ${{ secrets.PAGEKITE_SECRET }}

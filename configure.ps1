@@ -3,14 +3,9 @@
 # This script is executed when GitHub actions is initialized.
 Write-Output "[INFO] Script started!"
 
-# Download PageKite if not installed
-Write-Output "[INFO] Checking for PageKite installation..."
-try {
-    python -m pagekite --version
-} catch {
-    Write-Output "[INFO] PageKite not found. Installing..."
-    python -m pip install pagekite
-}
+# Install PageKite if not already installed
+Write-Output "[INFO] Installing PageKite..."
+python -m pip install pagekite
 
 # Enabling RDP Access
 Write-Output "[INFO] Enabling RDP access..."
